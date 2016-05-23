@@ -1,0 +1,11 @@
+This is the Requirements Document for ACME (ambiente de construção de modelos executáveis)
+
+
+- MAIN PURPOSE: a software tool that takes as input text file specifying the model to be built, build the model automatically, run the model in given configurations, and perform post-processing actions.
+
+- All code shall be backwards compatible with MATLAB 7.0 (r2011), in order to run in IAE
+
+
+- Build quick model (bildQuikModl) builds a copy of a given .mdl replacing the sfunctions by altered (optimized) versions of themselves, that is, with no calls to user-defined functions or structs with parameters. init_(ModelName).m file is needed for removing structs with parameters.
+
+	- At first: takes an .m containing an sfunction and removes all calls to user-defined functions.
