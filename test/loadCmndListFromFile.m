@@ -12,11 +12,12 @@ if length(WordByWord{1})<8 || (strcmp(WordByWord{1}(1:8),'function')==0)
 end
 
 frewind(SorcFilePont);
-CmndList = cell(size(WordByWord)); NValCmnd=0;
+CmndList = cell(size(WordByWord)); NValCmnd=0; 
+ContLastCmnd = false; LastCmnd = [];
 while ~feof(SorcFilePont)
     cmnd = fgets(SorcFilePont);
-    
     NChar = length(cmnd);
+    
     if NChar>1
         
         % remove leading and trailing spaces
@@ -27,8 +28,7 @@ while ~feof(SorcFilePont)
             % check if it is a commented line
             if strcmp(cmnd(1),'%')==0
                 
-                % not a commented line. Remove any comments and 
-                % put to storage
+                % not a commented line. Remove any mid-line comments
                 
                 kCutOff = 0; k=1; stringMode = false;
                 while k<=NChar && kCutOff==0
@@ -45,11 +45,24 @@ while ~feof(SorcFilePont)
                     k=k+1;
                 end
                 if kCutOff>1
-                    cmnd = cmnd(1:kCutOff-1);
+                    cmnd = cmnd([1:(kCutOff-1) NChar]);
                 end
                 
-                NValCmnd=NValCmnd+1;
-                CmndList{NValCmnd} = cmnd;
+                % remove ellipsis
+                
+                if length(cmnd)>4 && strcmp(cmnd(end-3:end-1),'...')
+                    LastCmnd = [LastCmnd,cmnd(1:end-4)]; %#ok<AGROW>
+                    ContLastCmnd = true;
+                else
+                    NValCmnd=NValCmnd+1;
+                    CmndList{NValCmnd} = [LastCmnd,cmnd];
+                    
+                    if ContLastCmnd
+                        ContLastCmnd = false;
+                        LastCmnd = [];
+                    end
+                end
+                
             end
         end
     end

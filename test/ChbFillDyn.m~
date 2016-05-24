@@ -1,4 +1,4 @@
-function [sys, x0 str ts simStateCompliance]=ChbFillDyn(t,x,u,flag,Pars)
+ function [sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)%[sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)
 %ChbFillDyn Chamber filling dynamics.
 %   Detailed explanation goes here.
 

@@ -1,6 +1,4 @@
-- build in IAE a generic .mdl model with an “editable” sfunction: OK
+- build in IAE a generic .mdl model with an “editable” sfunction: OK? Check!
 
-- TODO: REMOVE ELLIPSIS in commands (loadCmndListFromFile.m)!
-
-- TODO: get input arguments for main function (bildQuikModl.m)
+- TODO: put one command in each line! important for assignment checking
 

@@ -3,6 +3,7 @@ function [CmndList] = bildQuikModl(SfunNameXten)
 %   Detailed explanation goes here
 
 clc
+fclose('all');
 SorcFilePont = fopen(SfunNameXten,'r');
 TargFilePont = fopen([SfunNameXten(1:end-2),'_quick.m'],'w');
 
@@ -14,7 +15,7 @@ NValCmnd = numel(CmndList);
 % rename their internal variables with 'iv'n, where n is the 
 % smallest number for which there is no conflict.
 
-% Look for subfunctions definition
+% Look for subfunction definitions
 SubfLine = zeros(NValCmnd-1,1);
 SubfNmes = cell(NValCmnd-1,1);
 NSubf = 0;
@@ -51,62 +52,96 @@ SubfLine
 SubfNmes
 
 % Get variables list
-LastFuncCmndLine = SubfLine(1)-1
-VarList = cell(LastFuncCmndLine,1);
+% LastFuncCmndLine = SubfLine(1)-1
+% VarList = cell(LastFuncCmndLine,1);
 VarsStru = [];
+Nvar = 0; 
 
-% output arguments for main function
-CmndList{1}
-[BginIndx,EndIndx] = regexp(CmndList{1},'.*=');
-OutpStr = rmovSpac(CmndList{1}(8+BginIndx:EndIndx-1))
-
-% check if output expression is bracketed
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO: put this code into a separate function.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Nvar = 1; % TRIGGER WARNING: is it possible to have no outputs?
-if strcmp(OutpStr(1),'[')
-    OutpStr = rmovSpac(OutpStr(2:end-1))
-    [a,~] = regexp(OutpStr,'\W')
-    if isempty(a)
-        % brackets but no commas or spaces. 
-        % Single output argument becomes first var
-        VarsStru.(OutpStr(2:(end-1))) = 1;
-    else
-        %brackets, several output arguments. Here we go:
-        VarsStru.(OutpStr(1:a(1)-1)) = Nvar;
-        for j=2:length(a)
-            if a(j)>a(j-1)+1
-                Nvar = Nvar+1;
-                VarsStru.(OutpStr(a(j-1)+1:a(j)-1)) = Nvar;
-            end
-        end
-        Nvar=Nvar+1;
-        VarsStru.( OutpStr( (a(j)+1):1:end ) ) = Nvar;
-    end
-else
-    % no brackets: single output argument becomes first var
-    VarsStru.(OutpStr) = 1;
-end
-    
-VarsStru
-
-% input arguments for main function
-j = regexp(CmndList{1},'\(')
-InptStr = CmndList{1}(j+1:end)
+[Nvar,VarsStru] = findNewVars(Nvar,VarsStru,CmndList{1}(9:end),'input');
+[Nvar,VarsStru] = findNewVars(Nvar,VarsStru,CmndList{1}(9:end))
 
 
+% THIS CAN BE DELETED!
 
-for k=2:LastFuncCmndLine
-    vars = regexp(CmndList{k},'','match');
-end
+% if strcmp(OutpStr(1),'[')
+%     OutpStr = rmovSpac(OutpStr(2:end-1))
+%     [a,~] = regexp(OutpStr,'\W')
+%     if isempty(a)
+%         % brackets but no commas or spaces. 
+%         % Single output argument becomes first var
+%         VarsStru.(OutpStr) = 1;
+%     elseif length(a)==1
+%         %brackets, two output arguments.
+%         VarsStru.(OutpStr(1:(a(1)-1))) = 1;
+%         Nvar = Nvar+1;
+%         VarsStru.(OutpStr(a(1)+1:end)) = Nvar;
+%     else
+%         %brackets, several output arguments. Here we go:
+%         
+%         % get the first one:
+%         VarsStru.(OutpStr(1:a(1)-1)) = Nvar;
+%         
+%         % get the middle ones
+%         for j=2:length(a)
+%             if a(j)>a(j-1)+1
+%                 Nvar = Nvar+1;
+%                 VarsStru.(OutpStr(a(j-1)+1:a(j)-1)) = Nvar;
+%             end
+%         end
+%         
+%         % get the last one (if so)
+%         Nvar=Nvar+1;
+%         VarsStru.( OutpStr( (a(j)+1):1:end ) ) = Nvar;
+%     end
+% else
+%     % no brackets: single output argument becomes first var
+%     VarsStru.(OutpStr) = 1;
+% end
+%    
+% VarsStru
+% 
+% % get input arguments for main function
+% j = regexp(CmndList{1},'\(');
+% InptStr = rmovSpac(CmndList{1}(j+1:end-2))
+% 
+% if ~isempty(InptStr)
+%     %At least one input argument. Here we go:
+%     [a,~] = regexp(InptStr,'\W')
+% 
+%     if isempty(a)
+%         % no commas or spaces. 
+%         % Single input argument becomes var
+%         Nvar = Nvar+1;
+%         VarsStru.(InptStr) = Nvar;
+%     elseif length(a)==1
+%         %brackets, two output arguments.
+%         Nvar = Nvar+1;
+%         VarsStru.(InptStr(1:(a(1)-1))) = Nvar;
+%         Nvar = Nvar+1;
+%         VarsStru.(InptStr(a(1)+1:end)) = Nvar;
+%     else
+%         % more than one input argument.
+%         Nvar = Nvar+1;
+%         VarsStru.(InptStr(1:a(1)-1)) = Nvar;
+%         for j=2:length(a)
+%             if a(j)>a(j-1)+1
+%                 Nvar = Nvar+1;
+%                 VarsStru.(InptStr(a(j-1)+1:a(j)-1)) = Nvar;
+%             end
+%         end
+%         Nvar=Nvar+1;
+%         VarsStru.( InptStr( (a(j)+1):1:end ) ) = Nvar;
+%     end
+% end
+% 
+% VarsStru
+
+% for k=2:LastFuncCmndLine
+%     vars = regexp(CmndList{k},'','match');
+% end
 
 
-
-% Look for function calls
-
+% TODO: Look for external function calls
 
 
 for k=1:NValCmnd
