@@ -1,4 +1,4 @@
- function [sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)%[sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)
+ function [sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)
 %ChbFillDyn Chamber filling dynamics.
 %   Detailed explanation goes here.
 
@@ -79,7 +79,7 @@ function sys = mdlDerivatives(t,x,u,Pars)
     % gen
     FldDens = Pars.sys.gen.FldDens;
     AmbPres = Pars.sys.gen.AmbPres;
-    
+     
     % valve
     tValvOpen = Pars.sys.Valv.OpenTime;
     if t < tValvOpen
@@ -92,23 +92,30 @@ function sys = mdlDerivatives(t,x,u,Pars)
     TubeIntkMassFlow = OrifMassFlow(ValvPsgArea*Pars.sys.Valv.DchgCoef,...
         FldDens,TubeIntkPres-AmbPres);
     
-    TubeVol = Pars.sys.Tube.Vol;
-    
+    TubeVol = Pars.sys.Tube.Vol; 
     TubeFillVolDer = tubeFillVolDer(TubeIntkMassFlow,TubeVol,FldDens,...
     TubeFillVol);
-
+    
     % Ring
     RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow;
     RingVol = Pars.sys.Ring.Vol;
     FillFuncCode = Pars.sys.Ring.FillFuncCode;
     FillFuncPars = Pars.sys.Ring.FillFuncPars;
     
-    RingFillVolDer = chbFillVolDer(RingIntkMassFlow,RingVol,FldDens,...
+    RingFillVolDer = chbFillVolDer(RingIntkMassFlow,... hahaha
+        RingVol,FldDens,...
     RingFillVol,FillFuncCode,FillFuncPars);
+    Teste=[akm kmkd'kmkm';
+    
+    % é string: [\s, \,, \(, \[, \*,  ]'
+    % não é:    []'
     
     %% Load derivatives into 'sys' array
     sys = 0*x;
-    sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer;
+    sys(Pars. ... thujnkmmk
+        sim.SttInfo.  ... Teste steste teste teste
+        SttIndx.TubeFillVol... suga!!
+        ) = TubeFillVolDer; % Tomara que funcione!
     sys(Pars.sim.SttInfo.SttIndx.RingFillVol) = RingFillVolDer;
     
 end

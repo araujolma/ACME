@@ -39,15 +39,16 @@ else
 ValvPsgArea = Pars.sys.Valv.MaxArea;
 end
 TubeIntkMassFlow = OrifMassFlow(ValvPsgArea*Pars.sys.Valv.DchgCoef,FldDens,TubeIntkPres-AmbPres);
-TubeVol = Pars.sys.Tube.Vol;
+TubeVol = Pars.sys.Tube.Vol; 
 TubeFillVolDer = tubeFillVolDer(TubeIntkMassFlow,TubeVol,FldDens,TubeFillVol);
 RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow;
 RingVol = Pars.sys.Ring.Vol;
 FillFuncCode = Pars.sys.Ring.FillFuncCode;
 FillFuncPars = Pars.sys.Ring.FillFuncPars;
 RingFillVolDer = chbFillVolDer(RingIntkMassFlow,RingVol,FldDens,RingFillVol,FillFuncCode,FillFuncPars);
+Teste=[akma]'kmkm
 sys = 0*x;
-sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer;
+sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer; 
 sys(Pars.sim.SttInfo.SttIndx.RingFillVol) = RingFillVolDer;
 end
 function sys = mdlOutputs(x)
