@@ -1,4 +1,7 @@
 - build in IAE a generic .mdl model with an “editable” sfunction: OK? Check!
 
 - TODO: put one command in each line! important for assignment checking
+	Test bildQuikModl without it being on the same folder as the target function.
+
+- PSBL: store not only variable “index” but also the occurrances (lines) of each. 
 

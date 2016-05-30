@@ -77,8 +77,7 @@ function sys = mdlDerivatives(t,x,u,Pars)
     %% Calculate derivatives
     
     % gen
-    FldDens = Pars.sys.gen.FldDens;
-    AmbPres = Pars.sys.gen.AmbPres;
+    FldDens = Pars.sys.gen.FldDens; AmbPres = Pars.sys.gen.AmbPres;
      
     % valve
     tValvOpen = Pars.sys.Valv.OpenTime;
@@ -97,15 +96,16 @@ function sys = mdlDerivatives(t,x,u,Pars)
     TubeFillVol);
     
     % Ring
-    RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow;
-    RingVol = Pars.sys.Ring.Vol;
-    FillFuncCode = Pars.sys.Ring.FillFuncCode;
-    FillFuncPars = Pars.sys.Ring.FillFuncPars;
-    
+    RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow; RingVol = Pars.sys.Ring.Vol;
+    FillFuncCode = Pars.sys.Ring.FillFuncCode; FillFuncPars = Pars.sys.Ring.FillFuncPars;
+    %{ kmk
     RingFillVolDer = chbFillVolDer(RingIntkMassFlow,... hahaha
         RingVol,FldDens,...
     RingFillVol,FillFuncCode,FillFuncPars);
 %     Teste=[akma]'kmkm%ImportantVar = 3;
+      %{   
+    RingFillVol = 0;
+     %} 
     
     % é string: [\s, \,, \(, \[, \*, =, ]'
     % não é:    [\w, \), \], ]'

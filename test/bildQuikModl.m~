@@ -107,7 +107,7 @@ end
 
 
 for k=1:NValCmnd
-    fprintf(TargFilePont,'%s\n',CmndList{k});
+    fprintf(TargFilePont,'%s',CmndList{k},'\n']);
 end
 
 

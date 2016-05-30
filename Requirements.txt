@@ -9,3 +9,6 @@ This is the Requirements Document for ACME (ambiente de construção de modelos 
 - Build quick model (bildQuikModl) builds a copy of a given .mdl replacing the sfunctions by altered (optimized) versions of themselves, that is, with no calls to user-defined functions or structs with parameters. init_(ModelName).m file is needed for removing structs with parameters.
 
 	- At first: takes an .m containing an sfunction and removes all calls to user-defined functions.
+
+- SUPOSITIONS: 
+	- no string declaration comes before an assignment sign (=).

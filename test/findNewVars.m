@@ -1,21 +1,34 @@
 function [Nvar,VarsStru] = findNewVars(Nvar,VarsStru,cmnd,varargin)
 %FindNewVars Finds new variables in command line.
-%   Detailed explanation goes here
-
-% disp 'In find new vars!'
+%   [Nvar,VarsStru] = findNewVars(Nvar,VarsStru,cmnd)
+%   finds new vars in string 'cmnd', assuming it is a single command line.
+%   Example: if cmnd = 'x = sqrt(pi)/y;', 'x' is saved as a new variable.
 
 if nargin==3
-    % not function input. Look for assignments ('=').
-    [~,EndIndx] = regexp(cmnd,'.*=');
-    str = rmovSpac(cmnd(1:EndIndx-1));
+    % not function input. Look for assignments: '='.
+    BginIndx = regexp(cmnd,'[^=<>~]=[^=]');
+    if isempty(BginIndx)
+        return;
+    else
+%         cmnd
+%         BginIndx
+        str = rmovSpac(cmnd(1:BginIndx));
+    end
 elseif ischar(varargin{1}) && strcmp(varargin{1},'input')
-    [BginIndx,~] = regexp(cmnd,'(');
-    str = rmovSpac(cmnd(BginIndx:end-1));
+    % it is a function input. Look for parenthesis: '('.
+    BginIndx = regexp(cmnd,'(');
+    if isempty(BginIndx)
+        return;
+    else
+        str = rmovSpac(cmnd(BginIndx:end-1)); %end-1 removes the ')'.
+    end
+else 
+    error('Unidentified fourth argument.')
 end
    
 if strcmp(str(1),'[') || strcmp(str(1),'(')
    % brackets!
-   str = rmovSpac(str(2:end-1));
+   str = rmovSpac(str(2:end-1)); %end-1 removes the ')' or ']'.
    a = regexp(str,'\W');
    if isempty(a)
        % brackets but no commas or spaces. 
@@ -49,6 +62,19 @@ end
 end
 
 function [Nvar,VarsStru] = addVarIfNew(Nvar,VarsStru,VarCand)
+    
+    bginIndx = regexp(VarCand,'\(');
+    if ~isempty(bginIndx)
+        bginIndx = bginIndx(1);
+        [~,endIndx] = regexp(VarCand,'\)');
+        endIndx = endIndx(end);
+%         if length(bginIndx)>1
+%             error(['Too many parentheses in input string: ',VarCand])
+%         else
+        VarCand(bginIndx:endIndx) = [];
+        VarCand = rmovSpac(VarCand);
+    end
+    
     if ~isfield(VarsStru,VarCand)
         Nvar = Nvar+1;
         VarsStru.(VarCand)=Nvar;

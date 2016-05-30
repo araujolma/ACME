@@ -1,13 +1,13 @@
 function [sys,x0,str,ts,simStateCompliance] = ChbFillDyn(t,x,u,flag,Pars)
 switch flag
-case 0         
+case 0
 [sys,x0,str,ts,simStateCompliance] = mdlInitializeSizes(Pars);
 case 1
 sys = mdlDerivatives(t,x,u,Pars);
 case {2,9}
-sys = []; 
+sys = [];
 case 3
-sys = mdlOutputs(x); 
+sys = mdlOutputs(x);
 otherwise
 DAStudio.error('Simulink:blocks:unhandledFlag', num2str(flag));
 end
@@ -23,7 +23,7 @@ sizes.NumSampleTimes = 1;
 sys = simsizes(sizes);
 str = [];
 x0  = Pars.sim.SttInfo.InitSttArry;
-ts  = [0 0];   
+ts  = [0 0];
 simStateCompliance = 'DefaultSimState';
 end
 function sys = mdlDerivatives(t,x,u,Pars)
@@ -39,16 +39,15 @@ else
 ValvPsgArea = Pars.sys.Valv.MaxArea;
 end
 TubeIntkMassFlow = OrifMassFlow(ValvPsgArea*Pars.sys.Valv.DchgCoef,FldDens,TubeIntkPres-AmbPres);
-TubeVol = Pars.sys.Tube.Vol; 
+TubeVol = Pars.sys.Tube.Vol;
 TubeFillVolDer = tubeFillVolDer(TubeIntkMassFlow,TubeVol,FldDens,TubeFillVol);
 RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow;
 RingVol = Pars.sys.Ring.Vol;
 FillFuncCode = Pars.sys.Ring.FillFuncCode;
 FillFuncPars = Pars.sys.Ring.FillFuncPars;
 RingFillVolDer = chbFillVolDer(RingIntkMassFlow,RingVol,FldDens,RingFillVol,FillFuncCode,FillFuncPars);
-Teste=[akma]'kmkm
 sys = 0*x;
-sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer; 
+sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer;
 sys(Pars.sim.SttInfo.SttIndx.RingFillVol) = RingFillVolDer;
 end
 function sys = mdlOutputs(x)

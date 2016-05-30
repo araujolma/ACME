@@ -99,16 +99,20 @@ function sys = mdlDerivatives(t,x,u,Pars)
     % Ring
     RingIntkMassFlow = (TubeFillVol>=1.0)*TubeIntkMassFlow;
     RingVol = Pars.sys.Ring.Vol;
-    FillFuncCode = Pars.sys.Ring.FillFuncCode;
-    FillFuncPars = Pars.sys.Ring.FillFuncPars;
+    FillFuncCode = Pars.sys.Ring.FillFuncCode; FillFuncPars = Pars.sys.Ring.FillFuncPars;
     
     RingFillVolDer = chbFillVolDer(RingIntkMassFlow,... hahaha
         RingVol,FldDens,...
+    %{ kmk
     RingFillVol,FillFuncCode,FillFuncPars);
-    Teste=[akm kmkd'kmkm';
+%     Teste=[akma]'kmkm%ImportantVar = 3;
+    %{   
+    RingFillVol = 0;
+
+    %}
     
-    % é string: [\s, \,, \(, \[, \*,  ]'
-    % não é:    []'
+    % é string: [\s, \,, \(, \[, \*, =, ]'
+    % não é:    [\w, \), \], ]'
     
     %% Load derivatives into 'sys' array
     sys = 0*x;
