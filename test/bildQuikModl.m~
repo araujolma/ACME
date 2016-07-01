@@ -9,36 +9,68 @@ fclose('all');
 SorcFilePont = fopen(SfunNameXten,'r');
 TargFilePont = fopen([SfunNameXten(1:end-2),'_quick.m'],'w');
 
+% Main program flow:
+% 1. Scan the function whose name is sent. Remove comments, ellipsis, and
+% such. Obtain a command list (one command per entry).
+% 2. Get replaceable functions list.
+% 3. Scan the command list looking for function definitions. Separate the
+% original command list into smaller lists, one for main function and each 
+% subfunction.
+% 4. Scan the (main function) command list, looking for variables and 
+% function calls. Replace internal variables with conflict-proof names.
+% Assemble struct with variables list and another with called functions.
+% 5. For every called function, if it is a replaceable function or
+% subfunction, call the same code for the
+
 CmndList = loadCmndListFromFile(SorcFilePont);
+
+% The commands here have no \n, \r, \f or similar.
 NValCmnd = numel(CmndList);
 % HERE, CmndList holds all the useful commands.
 
 %% Look for replaceable functions
 
 %For now, only the functions in the current directory
-ReplFnctListStru = dir(); 
 
+% ReplFuncStru = dir(); 
+
+% % get only the .m files
+% elimArry = zeros(size(ReplFuncStru));
+% j=0;
+% for k=1:length(ReplFuncStru)
+%         name = ReplFuncStru(k).name;
+%         if length(name)<2 || strcmp(name(end-1:end),'.m')==0
+%             j=j+1;
+%             elimArry(j) = k;
+%         end
+% end
+% ReplFuncStru(elimArry(1:j)) = [];
+% ReplFuncStru = rmfield(ReplFuncStru,{'date','bytes','isdir','datenum'})
+% [ReplFuncStru.isSubf] = deal(false);
+
+thisDir = dir();
 % get only the .m files
-elimArry = zeros(size(ReplFnctListStru));
-j=0;
-for k=1:length(ReplFnctListStru)
-    name = ReplFnctListStru(k).name;
-    if length(name)<2 || strcmp(name(end-1:end),'.m')==0
-        j=j+1;
-        elimArry(j) = k;
+NDir = length(thisDir);
+ReplFuncStru(NDir).name = [];
+[ReplFuncStru(1:NDir).isSubf] = deal(false);
+NReplFunc=0;
+for k=1:NDir
+    if ~thisDir(k).isdir
+        name = thisDir(k).name;
+        if length(name)>2 && strcmp(name(end-1:end),'.m')
+            NReplFunc=NReplFunc+1;
+            % no .m at the end here:
+            ReplFuncStru(NReplFunc).name = name(1:end-2); 
+        end
     end
 end
+ReplFuncStru
 
-ReplFnctListStru(elimArry(1:j)) = [];
-ReplFnctNameList = {ReplFnctListStru(:).name};
-NReplFnct = length(ReplFnctNameList);
-
-% for k=1:NReplFnct
-%     SorcFilePont = fopen(SfunNameXten,'r');
-% end
+% ReplFuncNameList = {ReplFuncStru(:).name}
+% NReplFunc = length(ReplFuncNameList);
 
 
-%% Look for function calls inside main function
+%% Look for function calls and variables inside main function
 % next: look for function calls, beggining with internal functions
 % rename their internal variables with 'iv'n, where n is the 
 % smallest number for which there is no conflict.
@@ -52,7 +84,8 @@ for k=2:NValCmnd
         cmnd = CmndList{k};
         FrstNineChar = cmnd(1:9);        
         
-        if strcmp(FrstNineChar,'function ') || strcmp(FrstNineChar,'function[')
+        if strcmp(FrstNineChar,'function ') || ...
+                strcmp(FrstNineChar,'function[')
             % function declaration found.
             
             NSubf = NSubf+1;
@@ -77,6 +110,21 @@ else
     LastFuncCmndLine = NValCmnd;
 end
 
+% add subfunctions to the Replaceable functions list:
+
+for k=1:NSubf
+    ReplFuncStru(NReplFunc+k).name = SubfNmes{k};
+    ReplFuncStru(NReplFunc+k).isSubf = true;
+end
+NReplFunc = NReplFunc+NSubf;
+
+ReplFuncStru(NReplFunc+1:end) = [];
+
+[ReplFuncStru.isCall] = deal(false);
+[ReplFuncStru.lineCall] = deal([]);
+[ReplFuncStru.cmndList] = deal({});
+
+% ReplFuncStru(:).name
 
 % check called functions;
 % for each called function (clear from internal function calls):
@@ -85,29 +133,18 @@ end
 %   substitute the function calls by their codes themselves in the higher
 %   function
 
-%%%%%%%%%%%%%%%%%%%%%%
-VarsStru = [];
-Nvar = 0; 
-
-[Nvar,VarsStru] = findNewVars(Nvar,VarsStru,CmndList{1}(9:end),'input');
-% special operations with 5th argument?
-[Nvar,VarsStru] = findNewVars(Nvar,VarsStru,CmndList{1}(9:end));
-
-for k=2:LastFuncCmndLine
-    [Nvar,VarsStru] = findNewVars(Nvar,VarsStru,CmndList{k});
-end
-%%%%%%%%%%%%%%%%%%%%%%
-
-
+% [NVar,VarsStru] = getVarsInFnct(CmndList)
+[NVar,VarsStru,isReplFuncCall,CallFuncStru] = getVarsInFnct(...
+    CmndList(1:LastFuncCmndLine),ReplFuncStru)
 % HERE, all variables are mapped.
 
-% TODO: Look for external function calls
+% replace internal variables by conflict-proof names
 
 %% Next steps
 
 
 for k=1:NValCmnd
-    fprintf(TargFilePont,'%s',CmndList{k},'\n']);
+    fprintf(TargFilePont,'%s\n',CmndList{k});
 end
 
 

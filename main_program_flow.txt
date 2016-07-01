@@ -1,0 +1,9 @@
+Main program flow for bildQuikModl.m:
+
+- Replaceable function are provided as long as the main file (.m)
+
+- Load list of commands from .m file into a cell array. Remove comments and etc.
+
+- Scan the command list for finding variables (input, output and “middle”) and function calls (replaceable functions). Map the occurences of “middle” variables. Map calls to replaceable functions
+
+- for each function called, recall bildQuikModl to make sure no replacements are to be made. Recursion!

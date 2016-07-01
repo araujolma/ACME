@@ -46,6 +46,12 @@ RingVol = Pars.sys.Ring.Vol;
 FillFuncCode = Pars.sys.Ring.FillFuncCode;
 FillFuncPars = Pars.sys.Ring.FillFuncPars;
 RingFillVolDer = chbFillVolDer(RingIntkMassFlow,RingVol,FldDens,RingFillVol,FillFuncCode,FillFuncPars);
+CartVar.field = RingFillVol;
+disp 'Whatever',
+RingFillVol = 0;
+disp 'Whatever',
+disp 'I am sure 99% of programs would be ok with that last % sign.'
+disp 'I''m sure 99% of programs would misinterpret that last % sign.'
 sys = 0*x;
 sys(Pars.sim.SttInfo.SttIndx.TubeFillVol) = TubeFillVolDer;
 sys(Pars.sim.SttInfo.SttIndx.RingFillVol) = RingFillVolDer;

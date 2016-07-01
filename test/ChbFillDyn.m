@@ -105,17 +105,25 @@ function sys = mdlDerivatives(t,x,u,Pars)
 %     Teste=[akma]'kmkm%ImportantVar = 3;
       %{   
     RingFillVol = 0;
+kmkmkm
+jnk jn
+klmlkm
      %} 
     
-    % é string: [\s, \,, \(, \[, \*, =, ]'
-    % não é:    [\w, \), \], ]'
+    % is string: [\s, \,, \(, \[, \*, =, ]'
+    % is not (is transpose):    [\w, \), \], ]'
     
     %% Load derivatives into 'sys' array
+    CartVar.field = RingFillVol;
+    disp 'Whatever', RingFillVol = 0;
+    disp 'Whatever', %RingFillVolDer = 0;
+    disp 'I am sure 99% of programs would be ok with that last % sign.'
+    disp 'I''m sure 99% of programs would misinterpret that last % sign.'
     sys = 0*x;
     sys(Pars. ... thujnkmmk
         sim.SttInfo.  ... Teste steste teste teste
         SttIndx.TubeFillVol... suga!!
-        ) = TubeFillVolDer; % Tomara que funcione!
+        ) = TubeFillVolDer; % This should not appear on the code! sys=0;
     sys(Pars.sim.SttInfo.SttIndx.RingFillVol) = RingFillVolDer;
     
 end

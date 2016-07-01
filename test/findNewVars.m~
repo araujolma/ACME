@@ -82,9 +82,8 @@ function [NVar,VarsStru] = addVarIfNew(NVar,VarsStru,VarCand)
     
     bginIndx = regexp(VarCand,'\.');
     if ~isempty(bginIndx)
-        % Dot present. Remove everything following the first occurence.
         bginIndx = bginIndx(1);
-        VarCand = VarCand(1:bginIndx-1);
+        VarCand = Var
     end
     
     if ~isfield(VarsStru,VarCand)

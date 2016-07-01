@@ -59,10 +59,19 @@ if strcmp(str(1),'%')==0 && Cont.BlckCmmt==0
     k=1; isStrgMode = false;
     while k<=length(str)
         if strcmp(str(k),'''')
-            if (k==1)||(isempty(regexp(str(k-1:k),...
-                    '[\w,\),\]]''','once')))
-                % found single quote. Switch string mode
-                isStrgMode = ~isStrgMode;
+            if (k==1) || isStrgMode || ...
+                (~isStrgMode && isempty(regexp(str(k-1:k),...
+                    '[\w,\),\]]''','once'))  )
+                % found single quote for string. 
+                % Watch out for quotes in quotes
+                                               
+                if k<length(str) && strcmp(str(k+1),'''')
+                    %quotes in quotes! ignore next one.
+                    k=k+1;
+                else
+                    %Switch string mode
+                    isStrgMode = ~isStrgMode;
+                end
             end
         elseif ~isStrgMode 
 

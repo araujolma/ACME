@@ -59,10 +59,20 @@ if strcmp(str(1),'%')==0 && Cont.BlckCmmt==0
     k=1; isStrgMode = false;
     while k<=length(str)
         if strcmp(str(k),'''')
-            if (k==1)||(isempty(regexp(str(k-1:k),...
-                    '[\w,\),\]]''','once')))
-                % found single quote. Switch string mode
-                isStrgMode = ~isStrgMode;
+            if (k==1) || isStrgMode || ...
+                (~isStrgMode && isempty(regexp(str(k-1:k),...
+                    '[\w,\),\]]''','once'))  )
+                % found single quote for string. 
+                % Watch out for quotes in quotes
+                                               
+                if k<length(str) && strcmp(str(k+1),'''')
+                    k=k+1;
+                else
+%                 if isStrgMode && ...
+%                         (k==length(str) || strcmp(str(k+1),'''')==0)
+                    %Switch string mode
+                    isStrgMode = ~isStrgMode;
+                end
             end
         elseif ~isStrgMode 
 
@@ -110,15 +120,16 @@ if strcmp(str(1),'%')==0 && Cont.BlckCmmt==0
                     end
             end
             
-            % Just
+            % Should not be necessary, since the input code should be
+            % running, but...
             if Cont.Pare<0 || Cont.Brak<0 || Cont.Curl<0
                 error(['Invalid MATLAB syntax. Command: ',...
-                    cmnd])
+                    str])
             end
         end
-
         k=k+1;
     end
+    
     % end of command! put it in store 
     cmnd = [cmnd,rmovSpac(str)];
     str = [];

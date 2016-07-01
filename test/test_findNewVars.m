@@ -24,4 +24,4 @@ teste = 'plot( t,A (z== 1) );'
 [NVar,VarsStru] = findNewVars(NVar,VarsStru,teste)
 
 teste = 'x(9:end-2) = Sugou(1454:10000);'
-[NVar,VarsStru] = findNewVars(NVar,VarsStru,teste)
+[NVar,VarsStru] = findNewVars(NVar,VarsStru,teste);

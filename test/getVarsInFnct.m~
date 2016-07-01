@@ -1,13 +1,10 @@
-function [NVar,VarsStru,isReplFuncCall,CallFuncStru] = getVarsInFnct(...
+function [NVar,VarsStru,NCallFunc,CallFuncStru] = getVarsInFnct(...
     CmndList,ReplFuncStru)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
-% This approach to internal variables and IO variables is admittedly bad
-% and lazy (the idea was not to change findNewVars). 
-% It does work, however...
+% This approach to internal variables and IO variables is admi
 
-disp 'Beggining getVarsInFnct...'
 VarsStru = [];
 NVar = 0; 
 
@@ -22,17 +19,14 @@ for k=2:numel(CmndList)
 end
 
 IntVarsStru = VarsStru;
-fnames = fieldnames(IOVarsStru);
+fnames = fieldnames(IntVarsStru);
 for i=1:length(fnames)
-    IntVarsStru = rmfield(IntVarsStru,fnames{i});
+    IntVarsStru = rmfield(IntVarsStru,fnames{i})
 end
 
-IntVarsStru
-
-isReplFuncCall = false;
-% CallFuncStru = 0;
+NCallFunc = 0;
+CallFuncStru = 0;
 % Find function calls
 [NCallFunc,CallFuncStru] = findCallFunc(CmndList,ReplFuncStru,VarsStru)
-disp 'Leaving getVarsInFnct...'
 end
 
